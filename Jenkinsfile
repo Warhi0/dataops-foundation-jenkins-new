@@ -141,6 +141,9 @@ pipeline {
         }
         
         stage('🔍 ETL Validation') {
+            agent {
+                label "python-agent"
+            }
             when {
                 expression { currentBuild.result != 'FAILURE' }
             }
@@ -175,6 +178,9 @@ print(f'✅ Data file readable: {len(df.columns)} columns')
         }
         
         stage('🔄 ETL Processing') {
+            agent {
+                label "python-agent"
+            }
             when {
                 expression { currentBuild.result != 'FAILURE' }
             }
@@ -193,6 +199,9 @@ print(f'✅ Data file readable: {len(df.columns)} columns')
         }
         
         stage('📤 Deploy to Database') {
+            agent {
+                label "python-agent"
+            }
             when {
                 expression { currentBuild.result != 'FAILURE' }
             }
