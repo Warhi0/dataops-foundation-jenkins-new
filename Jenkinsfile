@@ -91,6 +91,9 @@ pipeline {
         stage('🧪 Unit Tests') {
             parallel {
                 stage('Test: guess_column_types') {
+                    agent {
+                        label "python-agent"
+                    }
                     steps {
                         script {
                             echo "Testing guess_column_types function..."
@@ -104,6 +107,9 @@ pipeline {
                 }
                 
                 stage('Test: filter_issue_date_range') {
+                    agent {
+                        label "python-agent"
+                    }
                     steps {
                         script {
                             echo "Testing filter_issue_date_range function..."
@@ -117,6 +123,9 @@ pipeline {
                 }
                 
                 stage('Test: clean_missing_values') {
+                    agent {
+                        label "python-agent"
+                    }
                     steps {
                         script {
                             echo "Testing clean_missing_values function..."
