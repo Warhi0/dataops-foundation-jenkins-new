@@ -37,39 +37,39 @@ def create_star_schema(df):
     
     # 1. Home Ownership Dimension
     if 'home_ownership' in df.columns:
-        home_ownership_dim = df[['home_ownership']].drop_duplicates().reset_index(drop=True)
-        home_ownership_dim['home_ownership_id'] = home_ownership_dim.index + 1
-        dim_tables['home_ownership_dim'] = home_ownership_dim
+        home_ownership_dim_kendo = df[['home_ownership']].drop_duplicates().reset_index(drop=True)
+        home_ownership_dim_kendo['home_ownership_id'] = home_ownership_dim_kendo.index + 1
+        dim_tables['home_ownership_dim_kendo'] = home_ownership_dim_kendo
         
         # Map to fact table
-        home_ownership_map = home_ownership_dim.set_index('home_ownership')['home_ownership_id'].to_dict()
+        home_ownership_map = home_ownership_dim_kendo.set_index('home_ownership')['home_ownership_id'].to_dict()
         fact_data['home_ownership_id'] = fact_data['home_ownership'].map(home_ownership_map)
-        print(f"   ✅ Home Ownership Dimension: {len(home_ownership_dim)} records")
+        print(f"   ✅ Home Ownership Dimension: {len(home_ownership_dim_kendo)} records")
     
     # 2. Loan Status Dimension
     if 'loan_status' in df.columns:
-        loan_status_dim = df[['loan_status']].drop_duplicates().reset_index(drop=True)
-        loan_status_dim['loan_status_id'] = loan_status_dim.index + 1
-        dim_tables['loan_status_dim'] = loan_status_dim
+        loan_status_dim_kendo = df[['loan_status']].drop_duplicates().reset_index(drop=True)
+        loan_status_dim_kendo['loan_status_id'] = loan_status_dim_kendo.index + 1
+        dim_tables['loan_status_dim_kendo'] = loan_status_dim_kendo
         
         # Map to fact table
-        loan_status_map = loan_status_dim.set_index('loan_status')['loan_status_id'].to_dict()
+        loan_status_map = loan_status_dim_kendo.set_index('loan_status')['loan_status_id'].to_dict()
         fact_data['loan_status_id'] = fact_data['loan_status'].map(loan_status_map)
-        print(f"   ✅ Loan Status Dimension: {len(loan_status_dim)} records")
+        print(f"   ✅ Loan Status Dimension: {len(loan_status_dim_kendo)} records")
     
     # 3. Issue Date Dimension
     if 'issue_d' in df.columns:
-        issue_d_dim = df[['issue_d']].drop_duplicates().reset_index(drop=True)
-        issue_d_dim['issue_d_id'] = issue_d_dim.index + 1
-        issue_d_dim['month'] = issue_d_dim['issue_d'].dt.month
-        issue_d_dim['year'] = issue_d_dim['issue_d'].dt.year
-        issue_d_dim['quarter'] = issue_d_dim['issue_d'].dt.quarter
-        dim_tables['issue_d_dim'] = issue_d_dim
+        issue_d_dim_kendo = df[['issue_d']].drop_duplicates().reset_index(drop=True)
+        issue_d_dim_kendo['issue_d_id'] = issue_d_dim_kendo.index + 1
+        issue_d_dim_kendo['month'] = issue_d_dim_kendo['issue_d'].dt.month
+        issue_d_dim_kendo['year'] = issue_d_dim_kendo['issue_d'].dt.year
+        issue_d_dim_kendo['quarter'] = issue_d_dim_kendo['issue_d'].dt.quarter
+        dim_tables['issue_d_dim_kendo'] = issue_d_dim_kendo
         
         # Map to fact table
-        issue_d_map = issue_d_dim.set_index('issue_d')['issue_d_id'].to_dict()
+        issue_d_map = issue_d_dim_kendo.set_index('issue_d')['issue_d_id'].to_dict()
         fact_data['issue_d_id'] = fact_data['issue_d'].map(issue_d_map)
-        print(f"   ✅ Issue Date Dimension: {len(issue_d_dim)} records")
+        print(f"   ✅ Issue Date Dimension: {len(issue_d_dim_kendo)} records")
     
     # 4. Create Fact Table
     fact_columns = [
@@ -139,7 +139,7 @@ def deploy_to_database(fact_table, dim_tables):
     print("\n🚀 Deploying to Database...")
     
     # Database configuration
-    server = '34.132.113.154'
+    server = 'mssql.minddatatech.com'
     database = 'TestDB'
     username = 'SA'
     password = os.getenv('DB_PASSWORD', 'Passw0rd123456')
@@ -165,15 +165,15 @@ def deploy_to_database(fact_table, dim_tables):
         
         # Deploy fact table
         print("\n   📤 Deploying fact table...")
-        fact_table.to_sql('loans_fact', con=engine, if_exists='replace', index=False)
-        print(f"     ✅ loans_fact: {len(fact_table)} records")
+        fact_table.to_sql('loans_fact_kendo', con=engine, if_exists='replace', index=False)
+        print(f"     ✅ loans_fact_kendo: {len(fact_table)} records")
         
         print("\n🎉 Database deployment completed successfully!")
         
         # Verify deployment
         print("\n🔍 Verifying deployment...")
         with engine.connect() as connection:
-            for table_name in list(dim_tables.keys()) + ['loans_fact']:
+            for table_name in list(dim_tables.keys()) + ['loans_fact_kendo']:
                 count_result = connection.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
                 count = count_result.fetchone()[0]
                 print(f"   📊 {table_name}: {count:,} records in database")
