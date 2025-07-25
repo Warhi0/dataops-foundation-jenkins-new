@@ -56,6 +56,9 @@ pipeline {
         }
         
         stage('🐍 Python Environment') {
+            agent {
+                label "python-agent"
+            }
             steps {
                 script {
                     echo "Setting up Python environment..."
